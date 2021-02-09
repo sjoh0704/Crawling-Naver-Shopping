@@ -3,6 +3,8 @@ import time
 from bs4 import BeautifulSoup
 from datetime import datetime
 import shopping_link
+from item import Item
+from MakeExcel import make_file
 
 MONTH = 50
 URL_CNT = 10
@@ -24,13 +26,13 @@ def compute_date(today, date):
 #     url2 = url[1][1:]
 #     return url1 + url2
 
-category = int(input("카테고리 입력\n(패션의류: 1, 패션잡화: 2, 화장품/미용: 3, 디지털/가전: 4, 가구/인테리어: 5, 출산/육아: 6, 식품: 7, 스포츠/레저: 8, 생활/가전: 9, 여가/생활편의:10 ):"))
-MONTH = int(input("몇개월내로 검색하시겠습니까? :"))
+main_category = int(input("해외: 1\t해외직구: 2\t직구: 3\n"))
+sub_category = int(input("패션의류: 1, 가구/인테리어: 2, 생활/건강: 3, 스포츠/레저: 4, 식품: 5, 패션잡화: 6, 화장품/미용: 7, 디지털/가전: 8, 출산/육아: 9, 여가/생활편의:10\n"))
+MONTH = int(input("몇 개월내로 검색하시겠습니까? :"))
 URL_CNT = int(input("몇 개의 리스트를 가져오시겠습니까? :"))
-driver = webdriver.Chrome(r'C:\Users\SeungJu\Downloads\chromedriver_win32 (1)\chromedriver.exe')
+driver = webdriver.Chrome(r'C:\Users\SeungJu\Downloads\chromedriver_win32 (3)\chromedriver.exe')
 
 
-#
 
 SCROLL_PAUSE_SEC = 0.01
 # 스크롤 높이 가져옴
@@ -39,16 +41,16 @@ title_list = []
 date_list = []
 selected_URL_list = []
 selected_title_list = []
-
+selected_item = []
 
 for i in range(1, 100):
 
     try:
-        link = shopping_link.get_category(category, i)
+        link = shopping_link.get_category(main_category, sub_category, i)
 
         driver.get(link)
     except Exception as e:
-        print("Exception: " + e)
+        print(e)
         break
 
 
@@ -73,16 +75,17 @@ for i in range(1, 100):
 
 
 # 타이틀
-    titles = soup.select('ul.list_basis div div div div  a[title] ')
+    titles = soup.select('ul.list_basis div div div div div a[title]')
 
     for title in titles:
         text = title.get("title")
         title_list.append(text)
+        # print(text)
 
 
     # url
 
-    url_items = soup.select('ul.list_basis div div div div  a[href]')
+    url_items = soup.select('ul.list_basis div div div div div a[href]')
     # print(str(i) + "번째")
     # print(url_items)
 
@@ -108,41 +111,28 @@ for i in range(1, 100):
             # print("안쪽")
     for i, date in enumerate(date_list):
         if compute_date(today, date) <= MONTH:
-            selected_URL_list.append(url_list[i])
-            selected_title_list.append(title_list[i])
-    if len(selected_URL_list) > URL_CNT:  # 가져오려는 리스트수
-        selected_URL_list = list(selected_URL_list[:URL_CNT])
-        selected_title_list = list(selected_title_list[:URL_CNT])
+            tmp = Item(title_list[i], url_list[i])
+            selected_item.append(tmp)
+
+    if len(selected_item) > URL_CNT:  # 가져오려는 리스트수
         driver.close()
+        selected_item = selected_item[:URL_CNT]
         break
-
-
-
-
-
-
-    #
-    # driver.close()
-
-# for url in url_list:
-#     print(url)
-
-
-# for title in title_list:
-#     print(title)
-# print(len(title_list), len(url_list))
-
-# for date in date_list:
-#     print(date)
-# url 100개
 for i in range(URL_CNT):
-    print(str(i + 1) + ". " + selected_title_list[i] +"\n URL: ", selected_URL_list[i] + "\n")
+    print(str(i + 1) + ". " + selected_item[i].title +"\n URL: ", selected_item[i].url + "\n")
+
+
+
+
 
 print()
+
+make_file(selected_item)
+
+
 print("< 상품 필터링하기 >")
 while(True):
-    tmp_list1 = []
-    tmp_list2 = []
+    tmp_list = []
     x = input("빼고 싶은 상품 입력(-1입력시 종료): ")
     y = 0
 
@@ -150,27 +140,26 @@ while(True):
         print("종료합니다")
 
         break
+
     i = 0
-    for i in range(len(selected_URL_list)):
-        if(x not in selected_title_list[i]):
-            tmp_list1.append(selected_title_list[i])
-            tmp_list2.append(selected_URL_list[i])
+    for i in range(len(selected_item)):
+        if(x not in selected_item[i].title):
+            tmp_list.append(selected_item[i])
 
 
 
 
-    if y == len(selected_title_list):
+
+    if y == len(selected_item):
         print("상품 없음")
         break
-    selected_title_list =tmp_list1
-    selected_URL_list =tmp_list2
+    selected_item = tmp_list
 
 
 print()
 print("< 필터링된 상품 목록 >")
-for i in range(len(selected_URL_list)):
-    print(str(i + 1) + ". " + selected_title_list[i] +"\n URL: ", selected_URL_list[i] + "\n")
-
+for i in range(len(selected_item)):
+    print(str(i + 1) + ". " + selected_item[i].title +"\n URL: ", selected_item[i].url + "\n")
 
 
 
