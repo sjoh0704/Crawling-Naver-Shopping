@@ -1,18 +1,137 @@
 from selenium import webdriver
-import time
 from bs4 import BeautifulSoup
 from datetime import datetime
-import shopping_link
-from item import Item
-from MakeExcel import make_file
+from openpyxl import Workbook
+import os
+import time
 
-MONTH = 50
-URL_CNT = 10
+
+CHROME_LOCATION = r'C:\chromedriver_win32\chromedriver.exe'
+
+def createFolder(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            # print("파일생성")
+    except OSError:
+        print('Error: Creating directory. ' + directory)
+
+
+def make_file(item_list):
+        # 엑셀파일 쓰기
+    write_wb = Workbook()
+
+        # 이름이 있는 시트를 생성
+    write_ws = write_wb.create_sheet('Naver Shopping')
+
+        # Sheet1에다 입력
+    sheet = write_wb.active
+    # write_ws['A1'] = '숫자'
+
+        #행 단위로 추가
+    # write_ws.append([1,2,3])
+
+        #셀 단위로 추가
+    # write_ws.cell(5, 5, '5행5열')
+    sheet.column_dimensions['A'].width = 100
+    for i in range(len(item_list)):
+
+        sheet.cell(i+1, 1).value = item_list[i].title
+        sheet.cell(i+1, 1).hyperlink = item_list[i].url
+        # sheet.cell(i + 1, 1).value.hyperlink = item_list[i].url
+
+    createFolder('/NaverShopping')
+    # write_wb.save(r"C:\Users\SeungJu\Desktop\pro_excel/navershopping.xlsx")
+    now = time.strftime('%y%m%d-%H%M%S')
+
+    write_wb.save(r"C:\NaverShopping\{}.xlsx".format(now))
+
+def get_category(main, sub, i):
+
+    if main == 1: #해외
+
+
+        if sub == 1: # 패션의류
+            link = "https://search.shopping.naver.com/search/all?catId=50000000&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        elif sub == 2:
+            link = "https://search.shopping.naver.com/search/all?catId=50000004&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        elif sub == 3:
+            link = "https://search.shopping.naver.com/search/all?catId=50000008&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        elif sub == 4:
+            link = "https://search.shopping.naver.com/search/all?catId=50000007&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        elif sub == 5:
+            link = "https://search.shopping.naver.com/search/all?catId=50000006&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        elif sub == 6:
+            link = "https://search.shopping.naver.com/search/all?catId=50000001&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        elif sub == 7:
+            link = "https://search.shopping.naver.com/search/all?catId=50000002&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        elif sub == 8:
+            link = "https://search.shopping.naver.com/search/all?catId=50000003&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        elif sub == 9:
+            link = "https://search.shopping.naver.com/search/all?catId=50000005&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        elif sub == 10:
+            link = "https://search.shopping.naver.com/search/all?catId=50000009&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
+        else:
+            raise Exception("ERROR: 존재하지 않는 카테고리")
+    elif main == 2: #해외직구
+        if sub == 1:
+           link = "https://search.shopping.naver.com/search/all?catId=50000000&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 2:
+           link = "https://search.shopping.naver.com/search/all?catId=50000004&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 3:
+           link = "https://search.shopping.naver.com/search/all?catId=50000008&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 4:
+           link = "https://search.shopping.naver.com/search/all?catId=50000007&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 5:
+           link = "https://search.shopping.naver.com/search/all?catId=50000006&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 6:
+           link = "https://search.shopping.naver.com/search/all?catId=50000001&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 7:
+           link = "https://search.shopping.naver.com/search/all?catId=50000002&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 8:
+           link = "https://search.shopping.naver.com/search/all?catId=50000003&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 9:
+           link = "https://search.shopping.naver.com/search/all?catId=50000005&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 10:
+           link = "https://search.shopping.naver.com/search/all?catId=50000009&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        else:
+            raise Exception("ERROR: 존재하지 않는 카테고리")
+    elif main == 3:  # 직구
+        if sub == 1:
+            link = "https://search.shopping.naver.com/search/all?catId=50000000&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 2:
+            link = "https://search.shopping.naver.com/search/all?catId=50000004&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 3:
+            link = "https://search.shopping.naver.com/search/all?catId=50000008&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 4:
+            link = "https://search.shopping.naver.com/search/all?catId=50000007&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 5:
+            link = "https://search.shopping.naver.com/search/all?catId=50000006&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 6:
+            link = "https://search.shopping.naver.com/search/all?catId=50000001&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+
+        if sub == 7:
+            link = "https://search.shopping.naver.com/search/all?catId=50000002&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 8:
+            link = "https://search.shopping.naver.com/search/all?catId=50000003&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 9:
+            link = "https://search.shopping.naver.com/search/all?catId=50000005&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+        if sub == 10:
+            link = "https://search.shopping.naver.com/search/all?catId=50000009&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
+
+        else:
+            raise Exception("ERROR: 존재하지 않는 카테고리")
+
+
+    return link
+class Item:
+    def __init__(self, title, url):
+        self.title = title
+        self.url = url
 
 def set_today():
     return datetime.today().strftime("%Y.%m.")
-today = set_today()
-print(set_today())
+
 
 def compute_date(today, date):
     date = list(map(int, date.split(".")[:-1]))
@@ -20,17 +139,13 @@ def compute_date(today, date):
     month = (today[0] - date[0]) * 12 + (today[1] - date[1])
     return month
 
-# def set_page(url, page_number):
-#     url = url.split("pagingIndex=")
-#     url1 = url[0] + "pagingIndex=" + str(page_number)
-#     url2 = url[1][1:]
-#     return url1 + url2
-
+today = set_today()
+print(set_today())
 main_category = int(input("해외: 1\t해외직구: 2\t직구: 3\n"))
 sub_category = int(input("패션의류: 1, 가구/인테리어: 2, 생활/건강: 3, 스포츠/레저: 4, 식품: 5, 패션잡화: 6, 화장품/미용: 7, 디지털/가전: 8, 출산/육아: 9, 여가/생활편의:10\n"))
 MONTH = int(input("몇 개월내로 검색하시겠습니까? :"))
 URL_CNT = int(input("몇 개의 리스트를 가져오시겠습니까? :"))
-driver = webdriver.Chrome(r'C:\Users\SeungJu\Downloads\chromedriver_win32 (3)\chromedriver.exe')
+driver = webdriver.Chrome(CHROME_LOCATION)
 
 
 
@@ -46,7 +161,7 @@ selected_item = []
 for i in range(1, 100):
 
     try:
-        link = shopping_link.get_category(main_category, sub_category, i)
+        link = get_category(main_category, sub_category, i)
 
         driver.get(link)
     except Exception as e:
@@ -130,36 +245,36 @@ print()
 make_file(selected_item)
 
 
-print("< 상품 필터링하기 >")
-while(True):
-    tmp_list = []
-    x = input("빼고 싶은 상품 입력(-1입력시 종료): ")
-    y = 0
-
-    if x == "-1":
-        print("종료합니다")
-
-        break
-
-    i = 0
-    for i in range(len(selected_item)):
-        if(x not in selected_item[i].title):
-            tmp_list.append(selected_item[i])
-
-
-
-
-
-    if y == len(selected_item):
-        print("상품 없음")
-        break
-    selected_item = tmp_list
-
-
-print()
-print("< 필터링된 상품 목록 >")
-for i in range(len(selected_item)):
-    print(str(i + 1) + ". " + selected_item[i].title +"\n URL: ", selected_item[i].url + "\n")
+# print("< 상품 필터링하기 >")
+# while(True):
+#     tmp_list = []
+#     x = input("빼고 싶은 상품 입력(-1입력시 종료): ")
+#     y = 0
+#
+#     if x == "-1":
+#         print("종료합니다")
+#
+#         break
+#
+#     i = 0
+#     for i in range(len(selected_item)):
+#         if(x not in selected_item[i].title):
+#             tmp_list.append(selected_item[i])
+#
+#
+#
+#
+#
+#     if y == len(selected_item):
+#         print("상품 없음")
+#         break
+#     selected_item = tmp_list
+#
+#
+# print()
+# print("< 필터링된 상품 목록 >")
+# for i in range(len(selected_item)):
+#     print(str(i + 1) + ". " + selected_item[i].title +"\n URL: ", selected_item[i].url + "\n")
 
 
 
