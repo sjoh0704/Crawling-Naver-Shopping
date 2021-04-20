@@ -45,7 +45,10 @@ def make_file(item_list):
     # write_wb.save(r"C:\Users\SeungJu\Desktop\pro_excel/navershopping.xlsx")
     now = time.strftime('%y%m%d-%H%M%S')
 
+
     write_wb.save(r"C:\NaverShopping\{}.xlsx".format(now))
+    file_location.configure(text = r"C:\NaverShopping\{}.xlsx".format(now))
+
 
 def get_category(main, sub, i):
 
@@ -291,6 +294,8 @@ def crawling():
     #     print(str(i + 1) + ". " + selected_item[i].title +"\n URL: ", selected_item[i].url + "\n")
 
 
+
+
 today = set_today()
 print(set_today())
 
@@ -301,7 +306,7 @@ global URL_CNT
 WAY = ["해외", "해외직구", "직구"]
 WHAT = ["패션의류", "가구/인테리어", "생활/건강", "스포츠/레저", "식품", "패션잡화", "화장품/미용", "디지털/가전", "출산/육아", "여가/생활편의"]
 window = Tk()
-window.geometry("400x400")
+window.geometry("400x300")
 window.title("Naver Shopping Crawling")
 window.resizable(width=False, height=False)
 way_btn = []
@@ -313,7 +318,7 @@ x = 20
 y = 10
 for i in range(len(WAY)):
     way_btn[i].place(x=x, y=y)
-    x += 70
+    x += 100
 
 what_var = IntVar()
 y += 50
@@ -323,25 +328,32 @@ x = 20
 for i in range(len(WHAT)):
     what_btn[i].place(x=x, y=y)
     y += 30
-x = 200
-y = 50
+x = 180
+y = 70
 
 month_text = Label(window, text="몇개월이내로 가져오시겠습니까?")
-month_entry = Entry(window, width=10)
+month_entry = Entry(window, width=5)
 month_text.place(x=x, y=y)
 y += 20
 month_entry.place(x=x, y=y)
 y += 40
 list_cnt = Label(window, text="몇개의 리스트를 가져오시겠습니까?")
-list_entry = Entry(window, width=10)
+list_entry = Entry(window, width=5)
 list_cnt.place(x=x, y=y)
 y += 20
 list_entry.place(x=x, y=y)
 
-label = Button(window, text="크롤링 시작", command=finalClick)
-label.place(x=300, y=300)
+label = Button(window, width=25, text="크롤링 시작하기", command=finalClick)
+label.place(x=180, y=200)
+
+file_location = Label(window)
+# file_location.bind("<Button-1>", lambda e: callback("http://www.google.com"))
+file_location.place(x=150, y=250)
 
 window.mainloop()
+
+
+
 
 
 
