@@ -10,6 +10,7 @@ import threading
 
 CHROME_LOCATION = r'C:\chromedriver_win32\chromedriver.exe'
 
+
 def createFolder(directory):
     try:
         if not os.path.exists(directory):
@@ -20,41 +21,25 @@ def createFolder(directory):
 
 
 def make_file(item_list):
-        # 엑셀파일 쓰기
+
     write_wb = Workbook()
-
-        # 이름이 있는 시트를 생성
     write_ws = write_wb.create_sheet('Naver Shopping')
-
-        # Sheet1에다 입력
     sheet = write_wb.active
-    # write_ws['A1'] = '숫자'
-
-        #행 단위로 추가
-    # write_ws.append([1,2,3])
-
-        #셀 단위로 추가
-    # write_ws.cell(5, 5, '5행5열')
     sheet.column_dimensions['A'].width = 100
     for i in range(len(item_list)):
 
         sheet.cell(i+1, 1).value = item_list[i].title
         sheet.cell(i+1, 1).hyperlink = item_list[i].url
-        # sheet.cell(i + 1, 1).value.hyperlink = item_list[i].url
 
     createFolder('/NaverShopping')
-    # write_wb.save(r"C:\Users\SeungJu\Desktop\pro_excel/navershopping.xlsx")
     now = time.strftime('%y%m%d-%H%M%S')
-
-
     write_wb.save(r"C:\NaverShopping\{}.xlsx".format(now))
-    file_location.configure(text = r"C:\NaverShopping\{}.xlsx".format(now))
+    file_location.configure(text=r"C:\NaverShopping\{}.xlsx".format(now))
 
 
 def get_category(main, sub, i):
     link = ""
     if main == 1: #해외
-
         if sub == 1: # 패션의류
             link = "https://search.shopping.naver.com/search/all?catId=50000000&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
         elif sub == 2:
@@ -77,12 +62,9 @@ def get_category(main, sub, i):
             link = "https://search.shopping.naver.com/search/all?catId=50000009&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8&sort=review&timestamp=&viewType=list"
         else:
             raise Exception("ERROR: 존재하지 않는 카테고리")
-
     elif main == 2: #해외직구
-
         if sub == 1:
             link = "https://search.shopping.naver.com/search/all?catId=50000000&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
-            print(link)
         elif sub == 2:
             link = "https://search.shopping.naver.com/search/all?catId=50000004&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
         elif sub == 3:
@@ -103,7 +85,6 @@ def get_category(main, sub, i):
             link = "https://search.shopping.naver.com/search/all?catId=50000009&frm=NVSHCAT&origQuery=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%ED%95%B4%EC%99%B8%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
         else:
             raise Exception("ERROR: 존재하지 않는 카테고리")
-
     elif main == 3:  # 직구
         if sub == 1:
             link = "https://search.shopping.naver.com/search/all?catId=50000000&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
@@ -125,10 +106,10 @@ def get_category(main, sub, i):
             link = "https://search.shopping.naver.com/search/all?catId=50000005&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
         elif sub == 10:
             link = "https://search.shopping.naver.com/search/all?catId=50000009&frm=NVSHCAT&origQuery=%EC%A7%81%EA%B5%AC&pagingIndex="+str(i)+"&pagingSize=40&productSet=overseas&query=%EC%A7%81%EA%B5%AC&sort=review&timestamp=&viewType=list"
-
         else:
             raise Exception("ERROR: 존재하지 않는 카테고리")
     return link
+
 
 class Item:
     def __init__(self, title, url):
@@ -137,7 +118,6 @@ class Item:
 
 def set_today():
     return datetime.today().strftime("%Y.%m.")
-
 
 def compute_date(today, date):
     date = list(map(int, date.split(".")[:-1]))
@@ -148,7 +128,6 @@ def compute_date(today, date):
 def setWay():
     global MAIN_FLAG
 
-
     way_category = way_var.get()
     if way_category == 0:
         MAIN_FLAG = False
@@ -157,6 +136,7 @@ def setWay():
     print(way_category)
 
     return way_category
+
 
 def setWhat():
     global SUB_FLAG
@@ -170,8 +150,10 @@ def setWhat():
 
     return what_category
 
+
 def setMonth():
     global MONTH_FLAG
+
     try:
         month = Entry.get(month_entry)
         MONTH_FLAG = True
@@ -203,35 +185,31 @@ def finalClick():
     global MONTH_FLAG
     global LIST_FLAG
 
-
-
     main_category = setWay()
     sub_category = setWhat()
     MONTH = setMonth()
     URL_CNT = setListCnt()
     if not(MAIN_FLAG and SUB_FLAG and MONTH_FLAG and LIST_FLAG):
-        print(MAIN_FLAG,SUB_FLAG,MONTH_FLAG, LIST_FLAG)
         setMonth()
         messagebox.showinfo("Error", "모든 항목을 입력해주세요")
-        print("d")
         return
+
     th2 = threading.Thread(target=crawling)
     th2.start()
 
 
 def crawling():
+
     driver = webdriver.Chrome(CHROME_LOCATION)
     SCROLL_PAUSE_SEC = 0.01
-    # 스크롤 높이 가져옴
     url_list = []
     title_list = []
     date_list = []
-    selected_URL_list = []
-    selected_title_list = []
     selected_item = []
+    # selected_URL_list = []
+    # selected_title_list = []
 
     for i in range(1, 100):
-        print("되고 있음")
         try:
             print(main_category, sub_category, i)
             link = get_category(main_category, sub_category, i)
@@ -241,7 +219,6 @@ def crawling():
         except Exception as e:
             print(e)
             break
-
 
         last_height = driver.execute_script("return document.body.scrollHeight")
         while True:
@@ -257,11 +234,8 @@ def crawling():
                 break
             last_height = new_height
 
-
-
         html = driver.page_source
         soup = BeautifulSoup(html, "html.parser")
-
 
     # 타이틀
         titles = soup.select('ul.list_basis div div div div div a[title]')
@@ -282,11 +256,9 @@ def crawling():
         for url in url_items:
             text = url.get("href")
 
-
             if "https://cr" in text and text != tmp:
                 url_list.append(text)
                 tmp = text
-
 
         # review
         date_items = soup.select(".list_basis div span.basicList_etc__2uAYO")
@@ -311,12 +283,11 @@ def crawling():
         print(selected_item)
         print(str(i + 1) + ". " + selected_item[i].title +"\n URL: ", selected_item[i].url + "\n")
 
-
     print()
 
     make_file(selected_item)
 
-
+# 사용하지 않는 기능
     # print("< 상품 필터링하기 >")
     # while(True):
     #     tmp_list = []
@@ -343,6 +314,8 @@ def crawling():
     #     print(str(i + 1) + ". " + selected_item[i].title +"\n URL: ", selected_item[i].url + "\n")
 
 
+
+
 MAIN_FLAG = False
 SUB_FLAG = False
 MONTH_FLAG = False
@@ -358,12 +331,15 @@ global URL_CNT
 WAY = ["해외", "해외직구", "직구"]
 WHAT = ["패션의류", "가구/인테리어", "생활/건강", "스포츠/레저", "식품", "패션잡화", "화장품/미용", "디지털/가전", "출산/육아", "여가/생활편의"]
 window = Tk()
-window.geometry("360x500")
+window.geometry("360x440")
 window.title("Naver Shopping Crawling")
 window.resizable(width=False, height=False)
 way_btn = []
 what_btn = []
 way_var = IntVar()
+
+
+# 메인 카테고리
 for i, way_title in enumerate(WAY):
     way_btn.append(Radiobutton(window, text=way_title, variable=way_var, value=i + 1, command=setWay))
 x = 20
@@ -374,13 +350,15 @@ y += 25
 for i in range(len(WAY)):
     way_btn[i].place(x=x, y=y)
     x += 100
-
 what_var = IntVar()
 y += 50
 for i, what_title in enumerate(WHAT):
     what_btn.append(Radiobutton(window, text=what_title, variable=what_var, value=i + 1, command=setWhat))
 x = 20
-sub_label = Label(window, text= "< Sub Category >")
+
+
+# 서브 카테고리
+sub_label = Label(window, text="< Sub Category >")
 sub_label.place(x=x, y=y)
 y += 25
 tmp = y
@@ -394,35 +372,37 @@ for i in range(len(WHAT)//2, len(WHAT)):
     y += 30
 
 
+# 몇개월이내로 가져올지 결정하기
 x = 25
 y = 270
-
 month_text = Label(window, text="몇개월이내로 가져오시겠습니까?")
 month_text.place(x=x, y=y)
 y += 25
 month_entry = Entry(window, width=5)
 month_entry.place(x=x+10, y=y)
-
 mon_label = Label(window, text="개월")
 mon_label.place(x=x+50, y=y)
 y += 40
 
+
+# 몇개의 리스트 가져올지 결정하기
 list_cnt = Label(window, text="몇개의 리스트를 가져오시겠습니까?")
 list_entry = Entry(window, width=5)
 list_cnt.place(x=x, y=y)
 y += 25
 list_entry.place(x=x+10, y=y)
-
 mon_label = Label(window, text="개")
 mon_label.place(x=x+50, y=y)
 
 
+# 크롤링하기 버튼
 label = Button(window, text="크롤링", width=10, height=5,  command=finalClick)
 label.place(x=250, y=280)
 
-file_location = Label(window)
-# file_location.bind("<Button-1>", lambda e: callback("http://www.google.com"))
-file_location.place(x=50, y=400)
+
+# 만들어진 엑셀 파일 주소
+file_location = Label(window, text="파일주소:")
+file_location.place(x=30, y=400)
 
 window.mainloop()
 
