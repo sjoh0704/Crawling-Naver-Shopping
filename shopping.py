@@ -5,6 +5,7 @@ from openpyxl import Workbook
 import os
 import time
 from tkinter import *
+from tkinter import messagebox
 import threading
 
 CHROME_LOCATION = r'C:\chromedriver_win32\chromedriver.exe'
@@ -143,32 +144,75 @@ def compute_date(today, date):
     return month
 
 def setWay():
+    global MAIN_FLAG
+
+
     way_category = way_var.get()
+    if way_category == 0:
+        MAIN_FLAG = False
+    else:
+        MAIN_FLAG = True
+    print(way_category)
+
     return way_category
 
 def setWhat():
+    global SUB_FLAG
+
     what_category = what_var.get()
+    print(what_category)
+    if what_category == 0:
+        SUB_FLAG = False
+    else:
+        SUB_FLAG = True
+
     return what_category
 
 def setMonth():
-    month = Entry.get(month_entry)
-    print(month)
-    return month
+    global MONTH_FLAG
+    try:
+        month = Entry.get(month_entry)
+        MONTH_FLAG = True
+        return int(month)
+    except:
+        MONTH_FLAG = False
+        return
+
 
 def setListCnt():
-    list_cnt = Entry.get(list_entry)
-    print(list_cnt)
-    return list_cnt
+    global LIST_FLAG
+
+    try:
+        list_cnt = Entry.get(list_entry)
+        LIST_FLAG = True
+        return int(list_cnt)
+    except:
+        LIST_FLAG = False
+        return None
+
 
 def finalClick():
     global main_category
     global sub_category
     global MONTH
     global URL_CNT
+    global MAIN_FLAG
+    global SUB_FLAG
+    global MONTH_FLAG
+    global LIST_FLAG
+
+
+
     main_category = setWay()
     sub_category = setWhat()
-    MONTH = int(setMonth())
-    URL_CNT = int(setListCnt())
+    MONTH = setMonth()
+    URL_CNT = setListCnt()
+    if not(MAIN_FLAG and SUB_FLAG and MONTH_FLAG and LIST_FLAG):
+        print(MAIN_FLAG,SUB_FLAG,MONTH_FLAG, LIST_FLAG)
+        setMonth()
+        messagebox.showinfo("Error", "모든 항목을 입력해주세요")
+        print("d")
+        return
     th2 = threading.Thread(target=crawling)
     th2.start()
 
@@ -260,6 +304,7 @@ def crawling():
             selected_item = selected_item[:URL_CNT]
             break
     for i in range(URL_CNT):
+        print(selected_item)
         print(str(i + 1) + ". " + selected_item[i].title +"\n URL: ", selected_item[i].url + "\n")
 
 
@@ -294,7 +339,10 @@ def crawling():
     #     print(str(i + 1) + ". " + selected_item[i].title +"\n URL: ", selected_item[i].url + "\n")
 
 
-
+MAIN_FLAG = False
+SUB_FLAG = False
+MONTH_FLAG = False
+LIST_FLAG = False
 
 today = set_today()
 print(set_today())
@@ -306,7 +354,7 @@ global URL_CNT
 WAY = ["해외", "해외직구", "직구"]
 WHAT = ["패션의류", "가구/인테리어", "생활/건강", "스포츠/레저", "식품", "패션잡화", "화장품/미용", "디지털/가전", "출산/육아", "여가/생활편의"]
 window = Tk()
-window.geometry("400x300")
+window.geometry("360x500")
 window.title("Naver Shopping Crawling")
 window.resizable(width=False, height=False)
 way_btn = []
@@ -316,6 +364,9 @@ for i, way_title in enumerate(WAY):
     way_btn.append(Radiobutton(window, text=way_title, variable=way_var, value=i + 1, command=setWay))
 x = 20
 y = 10
+main_label = Label(window, text= "< Main Category >")
+main_label.place(x=x, y=y)
+y += 25
 for i in range(len(WAY)):
     way_btn[i].place(x=x, y=y)
     x += 100
@@ -325,30 +376,49 @@ y += 50
 for i, what_title in enumerate(WHAT):
     what_btn.append(Radiobutton(window, text=what_title, variable=what_var, value=i + 1, command=setWhat))
 x = 20
-for i in range(len(WHAT)):
+sub_label = Label(window, text= "< Sub Category >")
+sub_label.place(x=x, y=y)
+y += 25
+tmp = y
+for i in range(len(WHAT)//2+1):
     what_btn[i].place(x=x, y=y)
     y += 30
-x = 180
-y = 70
+x = 220
+y = tmp
+for i in range(len(WHAT)//2, len(WHAT)):
+    what_btn[i].place(x=x, y=y)
+    y += 30
+
+
+x = 25
+y = 270
 
 month_text = Label(window, text="몇개월이내로 가져오시겠습니까?")
-month_entry = Entry(window, width=5)
 month_text.place(x=x, y=y)
-y += 20
-month_entry.place(x=x, y=y)
+y += 25
+month_entry = Entry(window, width=5)
+month_entry.place(x=x+10, y=y)
+
+mon_label = Label(window, text="개월")
+mon_label.place(x=x+50, y=y)
 y += 40
+
 list_cnt = Label(window, text="몇개의 리스트를 가져오시겠습니까?")
 list_entry = Entry(window, width=5)
 list_cnt.place(x=x, y=y)
-y += 20
-list_entry.place(x=x, y=y)
+y += 25
+list_entry.place(x=x+10, y=y)
 
-label = Button(window, width=25, text="크롤링 시작하기", command=finalClick)
-label.place(x=180, y=200)
+mon_label = Label(window, text="개")
+mon_label.place(x=x+50, y=y)
+
+
+label = Button(window, text="크롤링", width=10, height=5,  command=finalClick)
+label.place(x=250, y=280)
 
 file_location = Label(window)
 # file_location.bind("<Button-1>", lambda e: callback("http://www.google.com"))
-file_location.place(x=150, y=250)
+file_location.place(x=50, y=400)
 
 window.mainloop()
 
