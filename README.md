@@ -1,4 +1,4 @@
-# Crawling-Naver-Shopping
+# Naver-Shopping-Crawling
 
 네이버 쇼핑몰에서 원하는 카테고리 선택후, 원하는 조건의 상품 리스트를 크롤링하여 엑셀파일로 저장합니다.  
 리뷰가 많은 순, 최근 올라온 상품을 기준으로 크롤링합니다. 
